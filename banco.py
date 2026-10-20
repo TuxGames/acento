@@ -2,6 +2,7 @@
 import json
 import unicodedata
 
+from ortografia import ORTO_RULES, ORTOGRAFIA
 from words import PARES, RULES, WORDS
 
 # Só agudo e circunflexo contam como acento no jogo. Til e cedilha ficam visíveis.
@@ -50,9 +51,44 @@ def montar_banco():
     return banco
 
 
+def montar_ortografia():
+    itens, vistos = [], set()
+    for item in ORTOGRAFIA:
+        if len(item) not in (3, 5):
+            raise ValueError(f"Ortografia usa (modelo, opcoes, regra[, frase, par]): {item}")
+        modelo, opcoes_txt, regra = item[:3]
+        frase, par = (item[3], item[4]) if len(item) == 5 else (None, None)
+        if modelo.count("[") != 1 or modelo.count("]") != 1:
+            raise ValueError(f"'{modelo}' precisa de exatamente uma lacuna [..].")
+        antes, resto = modelo.split("[")
+        correta, depois = resto.split("]")
+        opcoes = opcoes_txt.split("/")
+        if correta not in opcoes:
+            raise ValueError(f"'{modelo}': a resposta '{correta}' não está nas opções {opcoes}.")
+        if len(set(opcoes)) != len(opcoes) or len(opcoes) < 2:
+            raise ValueError(f"'{modelo}': opções inválidas {opcoes}.")
+        if regra not in ORTO_RULES:
+            raise ValueError(f"Regra desconhecida '{regra}' em '{modelo}'.")
+        if frase is not None and "___" not in frase:
+            raise ValueError(f"A frase de '{modelo}' precisa ter a lacuna ___.")
+        palavra = antes + correta + depois
+        ident = f"o:{palavra}" + (f"|{frase}" if frase else "")
+        if ident in vistos:
+            raise ValueError(f"Palavra repetida na ortografia: '{palavra}'.")
+        vistos.add(ident)
+        itens.append({
+            "id": ident, "palavra": palavra, "antes": antes, "depois": depois,
+            "correta": correta, "opcoes": opcoes, "regra": regra,
+            "frase": frase, "par": par,
+        })
+    return itens
+
+
 def banco_json():
     dados = {
         "regras": {codigo: texto for codigo, (_, texto) in RULES.items()},
         "palavras": montar_banco(),
+        "orto_regras": ORTO_RULES,
+        "ortografia": montar_ortografia(),
     }
     return json.dumps(dados, ensure_ascii=False, separators=(",", ":"))

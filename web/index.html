@@ -3,33 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Acentua Aí</title>
-  <meta name="description" content="Jogo pra treinar acentuação: a palavra tem acento? Onde?">
+  <title>Gustavo vs. Analfabetismo</title>
+  <meta name="description" content="A luta do Gustavo contra o analfabetismo: acentuação e ortografia.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="app">
     <header class="topo">
-      <h1>Acentua <span>Aí</span></h1>
-      <button id="btn-reiniciar" class="link" title="Zerar placar">↺ Novo jogo</button>
+      <h1>Gustavo <span>vs.</span> Analfabetismo</h1>
+      <button id="btn-reiniciar" class="link" title="Zerar a partida deste modo (recordes ficam)">↺ Zerar</button>
     </header>
 
-    <nav class="niveis" role="tablist" aria-label="Nível">
-      <button class="nivel" data-nivel="normal">Normal <small data-contagem="normal"></small></button>
-      <button class="nivel" data-nivel="dificil">Difícil <small data-contagem="dificil"></small></button>
-      <button class="nivel" data-nivel="misto">Misto <small data-contagem="misto"></small></button>
+    <section class="batalha" aria-label="Placar geral">
+      <div class="lado gustavo"><small>Gustavo</small><strong id="b-gustavo">0</strong></div>
+      <div class="barra"><div id="b-barra"></div></div>
+      <div class="lado analf"><small>Analfabetismo</small><strong id="b-analf">0</strong></div>
+    </section>
+
+    <nav class="modos" aria-label="Modo">
+      <button class="modo" data-grupo="acento">Acentuação</button>
+      <button class="modo" data-grupo="ortografia">Ortografia <small data-contagem="ortografia"></small></button>
     </nav>
-    <p id="desc-nivel" class="desc-nivel"></p>
+    <nav id="niveis" class="niveis" aria-label="Nível">
+      <button class="nivel" data-modo="normal">Normal <small data-contagem="normal"></small></button>
+      <button class="nivel" data-modo="dificil">Difícil <small data-contagem="dificil"></small></button>
+      <button class="nivel" data-modo="misto">Misto <small data-contagem="misto"></small></button>
+    </nav>
+    <p id="desc-modo" class="desc-nivel"></p>
 
     <section class="placar">
       <div><small>Pontos</small><strong id="p-pontos">0</strong></div>
       <div><small>Sequência</small><strong id="p-seq">0</strong></div>
       <div><small>Recorde</small><strong id="p-recorde">0</strong></div>
-      <div><small>Rodadas</small><strong id="p-rodadas">0</strong></div>
+      <div><small>Melhor seq.</small><strong id="p-melhor">0</strong></div>
     </section>
 
     <section class="cartao">
-      <p id="instrucao" class="instrucao">Carregando palavras…</p>
+      <p id="instrucao" class="instrucao">Carregando, Gustavo…</p>
       <div id="palavra" class="palavra" aria-live="polite"></div>
       <p id="frase" class="frase" hidden></p>
 
@@ -42,6 +52,8 @@
         <button id="btn-voltar" class="btn neutro">← Mudar resposta</button>
       </div>
 
+      <div id="fase-opcoes" class="acoes" hidden></div>
+
       <div id="fase-resultado" hidden>
         <div id="feedback" class="feedback"></div>
         <p id="par" class="par" hidden></p>
@@ -53,8 +65,9 @@
     </section>
 
     <footer class="rodape">
-      <p><b>Tudo certo:</b> +2 · <b>Tem acento, lugar errado:</b> +1 · <b>Errou:</b> −1</p>
-      <p>Só contam acento agudo (´) e circunflexo (^). O til (~) e o ç já aparecem na palavra.</p>
+      <p id="regras-pontos"></p>
+      <p id="nota-modo"></p>
+      <p class="mini">O progresso fica salvo neste navegador.</p>
     </footer>
   </main>
   <script src="game.js"></script>

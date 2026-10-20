@@ -2,7 +2,7 @@
 import shutil
 from pathlib import Path
 
-from banco import banco_json, montar_banco
+from banco import banco_json, montar_banco, montar_ortografia
 
 RAIZ = Path(__file__).parent
 DIST = RAIZ / "dist"
@@ -13,8 +13,7 @@ def main():
         shutil.rmtree(DIST)
     shutil.copytree(RAIZ / "web", DIST)
     (DIST / "words.json").write_text(banco_json(), encoding="utf-8")
-    total = len(montar_banco())
-    print(f"dist/ gerado com {total} palavras.")
+    print(f"dist/ gerado: {len(montar_banco())} de acentuação, {len(montar_ortografia())} de ortografia.")
 
 
 if __name__ == "__main__":
