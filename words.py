@@ -285,9 +285,9 @@ PARES = [
     ("pôr", "DIFERENCIAL", "Vou ___ a mesa para o jantar.", "pôr (verbo) × por (preposição)"),
     ("por", "MONO_ATONO", "Passei ___ aqui ontem.", "pôr (verbo) × por (preposição)"),
     # ---- sábia / sabia / sabiá
-    ("sábia", "PAROX_TERM", "Minha avó é uma mulher muito ___.", "sábia (que tem sabedoria) × sabia (verbo saber) × sabiá (pássaro)"),
-    ("sabia", "PAROX_COMUM", "Ele ___ a resposta da questão.", "sábia (que tem sabedoria) × sabia (verbo saber) × sabiá (pássaro)"),
-    ("sabiá", "OXI_AEO", "O ___ cantou na janela.", "sábia (que tem sabedoria) × sabia (verbo saber) × sabiá (pássaro)"),
+    ("sábia", "PAROX_TERM", "Minha avó é uma mulher muito ___.", "sábia (sabedoria) × sabia (verbo saber) × sabiá (pássaro)"),
+    ("sabia", "PAROX_COMUM", "Ele ___ a resposta da questão.", "sábia (sabedoria) × sabia (verbo saber) × sabiá (pássaro)"),
+    ("sabiá", "OXI_AEO", "O ___ cantou na janela.", "sábia (sabedoria) × sabia (verbo saber) × sabiá (pássaro)"),
     # ---- secretária / secretaria
     ("secretária", "PAROX_TERM", "A ___ atendeu o telefone.", "secretária (a pessoa) × secretaria (o setor)"),
     ("secretaria", "PAROX_COMUM", "A ___ da escola fecha às 17h.", "secretária (a pessoa) × secretaria (o setor)"),
@@ -302,7 +302,7 @@ PARES = [
     ("fabrica", "PAROX_COMUM", "Essa empresa ___ celulares.", "fábrica (lugar) × fabrica (verbo fabricar)"),
     # ---- número / numero
     ("número", "PROPAROX", "Qual é o seu ___ de telefone?", "número (substantivo) × numero (verbo numerar)"),
-    ("numero", "PAROX_COMUM", "Eu sempre ___ as páginas do caderno.", "número (substantivo) × numero (verbo numerar)"),
+    ("numero", "PAROX_COMUM", "Eu ___ as páginas do caderno.", "número (substantivo) × numero (verbo numerar)"),
     # ---- público / publico
     ("público", "PROPAROX", "O ___ aplaudiu de pé.", "público (plateia) × publico (verbo publicar)"),
     ("publico", "PAROX_COMUM", "Eu ___ um vídeo novo toda semana.", "público (plateia) × publico (verbo publicar)"),

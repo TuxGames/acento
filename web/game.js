@@ -14,10 +14,11 @@ const DESCRICOES = {
   ortografia: "S ou Z? SS ou Ç? X ou CH? G ou J? Escolha o que completa a palavra.",
 };
 
+// curtas de propósito: cabem numa linha no celular (a 2ª linha é do detalhe)
 const FRASES = {
-  tudo: [`Boa, ${NOME}!`, `Mandou bem, ${NOME}!`, `Isso aí, ${NOME}!`, `O Analfabetismo apanhou dessa, ${NOME}!`, `Brabo, ${NOME}!`, `Na mosca, ${NOME}!`],
-  parcial: [`Quase, ${NOME}! Tem acento, mas não nessa letra.`, `Meio certo, ${NOME}: tem acento, mas o lugar tá errado.`],
-  erro: [`Ih, ${NOME}…`, `Ponto pro Analfabetismo, ${NOME}.`, `Essa o Analfabetismo levou, ${NOME}.`, `Não foi dessa vez, ${NOME}.`, `Vacilou, ${NOME}!`],
+  tudo: [`Boa, ${NOME}!`, `Mandou bem, ${NOME}!`, `Isso aí, ${NOME}!`, `Brabo, ${NOME}!`, `Na mosca, ${NOME}!`, `Amassou, ${NOME}!`],
+  parcial: [`Quase, ${NOME}!`, `Por pouco, ${NOME}!`],
+  erro: [`Ih, ${NOME}…`, `Vacilou, ${NOME}!`, `Essa doeu, ${NOME}.`, `Não foi, ${NOME}.`],
 };
 const sortear = (lista) => lista[Math.floor(Math.random() * lista.length)];
 const sinal = (n) => (n > 0 ? `+${n}` : `−${Math.abs(n)}`);
@@ -148,7 +149,9 @@ function animar(box) { box.classList.remove("pop"); void box.offsetWidth; box.cl
 function desenharAcento(texto, { clicavel = false, certa = null, errada = null } = {}) {
   const box = $("#palavra");
   box.innerHTML = "";
-  Array.from(texto).forEach((ch, i) => {
+  const letras = Array.from(texto);
+  box.style.setProperty("--n", letras.length);
+  letras.forEach((ch, i) => {
     const cls = [];
     if (i === certa) cls.push("certa");
     if (i === errada) cls.push("errada");
@@ -162,11 +165,16 @@ function desenharAcento(texto, { clicavel = false, certa = null, errada = null }
 function desenharOrto(item, preenchida = null, acertou = null) {
   const box = $("#palavra");
   box.innerHTML = "";
+  // a lacuna tem a largura da maior opção, pra nada pular quando ela é preenchida
+  const k = Math.max(...item.opcoes.map((o) => o.length));
+  box.style.setProperty("--n", Array.from(item.antes).length + Array.from(item.depois).length + k);
   Array.from(item.antes).forEach((ch) => box.appendChild(tile(ch)));
   const cls = ["slot"];
   if (acertou === true) cls.push("certa");
   if (acertou === false) cls.push("revelada");
-  box.appendChild(tile(preenchida ?? "?", cls));
+  const slot = tile(preenchida ?? "?", cls);
+  slot.style.setProperty("--k", k);
+  box.appendChild(slot);
   Array.from(item.depois).forEach((ch) => box.appendChild(tile(ch)));
   animar(box);
 }
@@ -189,6 +197,8 @@ function perguntaAcento(item) {
 
 function proxima() {
   renderTopo();
+  $("#instrucao").className = "instrucao";
+  $("#explica").hidden = true;
   const item = itemAtual();
   desenharFrase(item.frase);
   if (item.tipo === "acento") {
@@ -250,33 +260,26 @@ function registrar(resultado) {
 }
 
 function mostrarResultado(item, resultado, extras, detalhe = null) {
-  const fb = $("#feedback");
-  fb.className = `feedback ${resultado}`;
-  fb.innerHTML = "";
-  fb.append(`${sortear(FRASES[resultado])} ${sinal(PONTOS[resultado])}`);
-  if (detalhe) {
+  const titulo = $("#instrucao");
+  titulo.className = `instrucao ${resultado}`;
+  titulo.textContent = `${sortear(FRASES[resultado])} ${sinal(PONTOS[resultado])}`;
+  if (detalhe) {  // vai na 2ª linha do título, que já tem espaço reservado
     const d = document.createElement("span");
     d.className = "detalhe";
     d.textContent = detalhe;
-    fb.appendChild(d);
+    titulo.appendChild(d);
   }
-  const correta = document.createElement("span");
-  correta.className = "correta";
-  correta.textContent = item.palavra;
-  fb.appendChild(correta);
-  extras.forEach((t) => {
-    const e = document.createElement("span");
-    e.className = "combo";
-    e.textContent = t;
-    fb.appendChild(e);
-  });
 
-  $("#par").hidden = !item.par;
-  $("#par").textContent = item.par || "";
+  const preencher = (sel, texto) => { const el = $(sel); el.hidden = !texto; el.textContent = texto || ""; };
+  preencher("#combo", extras.join("  "));
+  preencher("#par", item.par);
   $("#regra").textContent = item.tipo === "acento" ? REGRAS[item.regra] : ORTO_REGRAS[item.regra];
+  $("#explica").hidden = false;
+  $(".conteudo").scrollTop = 0;
+
   renderTopo();
   mostrarFase("resultado");
-  $("#btn-proxima").focus();
+  if (matchMedia("(hover: hover)").matches) $("#btn-proxima").focus({ preventScroll: true });
 }
 
 function responderAcento(disseQueTem, posicao = null) {
@@ -290,10 +293,14 @@ function responderAcento(disseQueTem, posicao = null) {
 
   const extras = registrar(resultado);
   const escolhida = disseQueTem ? posicao : null;
-  desenharAcento(item.mostrada, { certa: item.pos, errada: escolhida !== null && escolhida !== item.pos ? escolhida : null });
+  // mostra a palavra já com o acento, com a letra certa em verde (e a escolhida em vermelho)
+  desenharAcento(item.palavra, { certa: item.pos, errada: escolhida !== null && escolhida !== item.pos ? escolhida : null });
   desenharFrase(item.frase, item.palavra);
-  $("#instrucao").textContent = tem ? "O acento fica na letra destacada." : "Aqui ela não tem acento.";
-  mostrarResultado(item, resultado, extras);
+  let detalhe = null;
+  if (!tem) detalhe = resultado === "erro" ? "Essa não tem acento. Ponto pro Analfabetismo." : "Essa não tem acento mesmo.";
+  else if (resultado === "erro") detalhe = "Tinha acento! Ponto pro Analfabetismo.";
+  else if (resultado === "parcial") detalhe = "Tem acento, mas não nessa letra.";
+  mostrarResultado(item, resultado, extras, detalhe);
 }
 
 function responderOrto(opcao) {
@@ -304,8 +311,7 @@ function responderOrto(opcao) {
   const extras = registrar(resultado);
   desenharOrto(item, item.correta, acertou);
   desenharFrase(item.frase, item.palavra);
-  $("#instrucao").textContent = `Com ${item.correta.toUpperCase()}.`;
-  const detalhe = acertou ? null : `Você marcou ${opcao.toUpperCase()}, mas é ${item.correta.toUpperCase()}.`;
+  const detalhe = acertou ? null : `Você marcou ${opcao.toUpperCase()}, mas é com ${item.correta.toUpperCase()}.`;
   mostrarResultado(item, resultado, extras, detalhe);
 }
 
