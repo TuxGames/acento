@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acentua Aí</title>
+  <meta name="description" content="Jogo pra treinar acentuação: a palavra tem acento? Onde?">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topo">
+      <h1>Acentua <span>Aí</span></h1>
+      <button id="btn-reiniciar" class="link" title="Zerar placar">↺ Novo jogo</button>
+    </header>
+
+    <nav class="niveis" role="tablist" aria-label="Nível">
+      <button class="nivel" data-nivel="normal">Normal <small data-contagem="normal"></small></button>
+      <button class="nivel" data-nivel="dificil">Difícil <small data-contagem="dificil"></small></button>
+      <button class="nivel" data-nivel="misto">Misto <small data-contagem="misto"></small></button>
+    </nav>
+    <p id="desc-nivel" class="desc-nivel"></p>
+
+    <section class="placar">
+      <div><small>Pontos</small><strong id="p-pontos">0</strong></div>
+      <div><small>Sequência</small><strong id="p-seq">0</strong></div>
+      <div><small>Recorde</small><strong id="p-recorde">0</strong></div>
+      <div><small>Rodadas</small><strong id="p-rodadas">0</strong></div>
+    </section>
+
+    <section class="cartao">
+      <p id="instrucao" class="instrucao">Carregando palavras…</p>
+      <div id="palavra" class="palavra" aria-live="polite"></div>
+      <p id="frase" class="frase" hidden></p>
+
+      <div id="fase-pergunta" class="acoes" hidden>
+        <button id="btn-sim" class="btn sim">Tem acento <kbd>S</kbd></button>
+        <button id="btn-nao" class="btn nao">Não tem <kbd>N</kbd></button>
+      </div>
+
+      <div id="fase-local" class="acoes" hidden>
+        <button id="btn-voltar" class="btn neutro">← Mudar resposta</button>
+      </div>
+
+      <div id="fase-resultado" hidden>
+        <div id="feedback" class="feedback"></div>
+        <p id="par" class="par" hidden></p>
+        <p id="regra" class="regra"></p>
+        <div class="acoes">
+          <button id="btn-proxima" class="btn sim">Próxima <kbd>Enter</kbd></button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="rodape">
+      <p><b>Tudo certo:</b> +2 · <b>Tem acento, lugar errado:</b> +1 · <b>Errou:</b> −1</p>
+      <p>Só contam acento agudo (´) e circunflexo (^). O til (~) e o ç já aparecem na palavra.</p>
+    </footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
